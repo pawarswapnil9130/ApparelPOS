@@ -53,7 +53,7 @@ public class ActivationViewModel : ViewModelBase
         _barcodeService = barcodeService;
 
         MachineCode = _hardwareInfoService.GetMachineCode();
-        PaymentUrl = $"https://activate.apparelpos.in/renew?mc={MachineCode}&amt=249";
+        PaymentUrl = $"https://apparelpos-0iti.onrender.com/renew?mc={MachineCode}&amt=249";
         QrCodeImageSource = _barcodeService.GenerateQrCodeImageSource(PaymentUrl, 200);
 
         var currentLic = _licenseService.GetCachedLicenseInfo();

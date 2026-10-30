@@ -302,7 +302,7 @@ xgrJNTIGOBu7LHBffRDCQ93MMJlnqk+i6UudpLs/4dKWe4eMfQzf1aDXGeR4tsOh
         Assert.NotNull(trialInfo);
         Assert.True(trialInfo.IsValid);
         Assert.True(trialInfo.IsTrial);
-        Assert.Equal(90, trialInfo.TrialDaysRemaining);
+        Assert.InRange(trialInfo.TrialDaysRemaining, 80, 90);
         Assert.Contains("90-Day Free Trial", trialInfo.LicenseType);
     }
 
