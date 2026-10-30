@@ -1,0 +1,29 @@
+# Build outputs
+[Bb]in/
+[Oo]bj/
+publish/
+
+# IDE & Editor files
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Environment variables & secrets
+.env
+server/.env
+private_key.pem
+
+# Local SQLite databases
+*.db
+*.db-wal
+*.db-shm
+server/sales.db
+
+# Generated license file
+license.lic
+.trial_state
+
+# Python cache
+__pycache__/
+*.py[cod]

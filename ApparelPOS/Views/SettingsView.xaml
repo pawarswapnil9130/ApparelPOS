@@ -1,0 +1,174 @@
+<UserControl x:Class="ApparelPOS.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:ApparelPOS.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1100">
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Style="{StaticResource CardPanel}" Padding="16,12" Margin="0,0,0,14">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="⚙️ SYSTEM CONFIGURATION &amp; HARDWARE SETUP" FontWeight="Bold" FontSize="16" Foreground="#FFFFFF"/>
+                    <TextBlock Text="Store identity, offline UPI payment static QR, thermal printers, and hardware-locked license"
+                               FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                </StackPanel>
+                <Button Grid.Column="1" Command="{Binding SaveSettingsCommand}" Content="💾 Save All Settings" Style="{StaticResource SuccessButton}" Padding="20,8"/>
+            </Grid>
+        </Border>
+
+        <!-- Content Area: 2 Columns -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="5*"/>
+                    <ColumnDefinition Width="5*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Left Column: Store Profile & UPI -->
+                <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                    <!-- Store Profile Card -->
+                    <Border Style="{StaticResource CardPanel}" Margin="0,0,0,14" Padding="18">
+                        <StackPanel>
+                            <TextBlock Text="🏪 STORE IDENTITY &amp; TAX PROFILE" FontWeight="Bold" FontSize="13" Foreground="{StaticResource PrimaryLightBrush}" Margin="0,0,0,12"/>
+
+                            <TextBlock Text="Store / Shop Name *" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding Settings.StoreName, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10"/>
+
+                            <TextBlock Text="Address Line" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding Settings.AddressLine1, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10"/>
+
+                            <TextBlock Text="City, State &amp; Pin Code" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding Settings.CityStateZip, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10"/>
+
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                    <TextBlock Text="Phone / Mobile" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                                    <TextBox Text="{Binding Settings.Phone, UpdateSourceTrigger=PropertyChanged}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                    <TextBlock Text="GSTIN / Tax ID" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                                    <TextBox Text="{Binding Settings.GstNumber, UpdateSourceTrigger=PropertyChanged}"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <TextBlock Text="Store Tagline / Subtitle" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding Settings.Tagline, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10"/>
+
+                            <TextBlock Text="Thermal Receipt Footer / Exchange Policy" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding Settings.ReceiptFooter, UpdateSourceTrigger=PropertyChanged}" Height="55" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Offline Static UPI QR Settings Card -->
+                    <Border Style="{StaticResource CardPanel}" Padding="18">
+                        <StackPanel>
+                            <TextBlock Text="📱 OFFLINE UPI STATIC QR CONFIGURATION" FontWeight="Bold" FontSize="13" Foreground="{StaticResource PrimaryLightBrush}" Margin="0,0,0,4"/>
+                            <TextBlock Text="Generates NPCI standard UPI QR codes offline without any payment gateway or API dependency." FontSize="11.5" Foreground="{StaticResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,0,0,12"/>
+
+                            <TextBlock Text="Merchant UPI VPA (e.g. storename@okaxis, merchant@upi)" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding Settings.UpiVpa, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10"/>
+
+                            <TextBlock Text="Payee Display Name" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding Settings.UpiPayeeName, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Catalog Diagnostics & Sample Data Card -->
+                    <Border Style="{StaticResource CardPanel}" Margin="0,14,0,0" Padding="18">
+                        <StackPanel>
+                            <TextBlock Text="📦 SAMPLE APPAREL CATALOG &amp; DATA RESTORE" FontWeight="Bold" FontSize="13" Foreground="{StaticResource PrimaryLightBrush}" Margin="0,0,0,4"/>
+                            <TextBlock Text="Restore standard demo apparel products (Oxford Shirts, Denim Jeans, Polo T-Shirts, Kurtas, Blazers) with full S, M, L, XL sizes &amp; scannable barcodes. Existing products are kept intact."
+                                       FontSize="11.5" Foreground="{StaticResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,0,0,12"/>
+                            <Button Command="{Binding RestoreSampleCatalogCommand}" Content="📦 Load 5 Garments &amp; 24 Size Variants" Style="{StaticResource PrimaryButton}" Padding="16,8"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Right Column: Hardware Printers & Anti-Piracy Licensing -->
+                <StackPanel Grid.Column="1">
+                    <!-- Printers Configuration Card -->
+                    <Border Style="{StaticResource CardPanel}" Margin="0,0,0,14" Padding="18">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,6">
+                                <TextBlock Text="🖨️ PRINTER SETUP (USB / WI-FI / BLUETOOTH / PDF)" FontWeight="Bold" FontSize="13" Foreground="{StaticResource PrimaryLightBrush}" VerticalAlignment="Center"/>
+                                <Button HorizontalAlignment="Right" Command="{Binding RefreshPrintersCommand}" Content="🔄 Refresh Printers" Padding="8,3" FontSize="11"/>
+                            </Grid>
+                            <TextBlock Text="Connect any printer via Windows (USB cable, Wi-Fi, or Bluetooth). If you don't have a printer, select 'None / Digital Receipt &amp; PDF Preview' to view and save digital bills."
+                                       FontSize="11.5" Foreground="{StaticResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,0,0,12"/>
+
+                            <TextBlock Text="Receipt Paper Width:" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <RadioButton Grid.Column="0" Content="3-Inch (80mm standard)" IsChecked="{Binding Settings.ThermalPaperWidth, Converter={x:Null}}"
+                                             GroupName="PaperWidth" IsEnabled="True"/>
+                                <RadioButton Grid.Column="1" Content="2-Inch (58mm compact)" GroupName="PaperWidth"/>
+                            </Grid>
+
+                            <TextBlock Text="Receipt Printer (Thermal, Laser, or Digital PDF):" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <ComboBox ItemsSource="{Binding InstalledPrinters}" SelectedItem="{Binding Settings.ThermalPrinterName}" Margin="0,0,0,12"/>
+
+                            <TextBlock Text="Barcode / Price Tag Label Printer:" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <ComboBox ItemsSource="{Binding InstalledPrinters}" SelectedItem="{Binding Settings.LabelPrinterName}" Margin="0,0,0,16"/>
+
+                            <Button Command="{Binding TestThermalPrintCommand}" Content="🖨️ Run Test Print" Style="{StaticResource PrimaryButton}" Margin="0,0,0,4"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Anti-Piracy Hardware Locking & Node-Lock Status -->
+                    <Border Style="{StaticResource CardPanel}" Padding="18">
+                        <StackPanel>
+                            <TextBlock Text="🛡️ HARDWARE-LOCKED LICENSE INFORMATION" FontWeight="Bold" FontSize="13" Foreground="{StaticResource PrimaryLightBrush}" Margin="0,0,0,10"/>
+
+                            <Border Background="{StaticResource BgInputBrush}" BorderBrush="{StaticResource PrimaryBrush}" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,0,0,12">
+                                <StackPanel>
+                                    <TextBlock Text="THIS MACHINE CODE (HWID):" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                    <TextBlock Text="{Binding MachineCode}" FontFamily="Consolas" FontSize="18" FontWeight="Bold" Foreground="#FFFFFF" Margin="0,2,0,0"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Grid Margin="0,0,0,6">
+                                <TextBlock Text="License Status:" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                <TextBlock Text="Cryptographically Verified (RSA-2048)" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource SuccessBrush}"/>
+                            </Grid>
+
+                            <Grid Margin="0,0,0,6">
+                                <TextBlock Text="Licensed To:" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{Binding LicenseInfo.CustomerName}" HorizontalAlignment="Right" FontWeight="SemiBold"/>
+                            </Grid>
+
+                            <Grid Margin="0,0,0,6">
+                                <TextBlock Text="Expiry Date:" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{Binding LicenseInfo.ExpiryDate}" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource PrimaryLightBrush}"/>
+                            </Grid>
+
+                            <Grid Margin="0,0,0,6">
+                                <TextBlock Text="License Tier:" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{Binding LicenseInfo.LicenseType}" HorizontalAlignment="Right"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="2" Background="{StaticResource BgCardBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="12,6" Margin="0,10,0,0">
+            <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource PrimaryLightBrush}" FontWeight="SemiBold"/>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,0 +1,620 @@
+<UserControl x:Class="ApparelPOS.Views.InventoryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:ApparelPOS.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="750" d:DesignWidth="1100">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <Grid Margin="14">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Top Filter & Action Bar -->
+                <Border Grid.Row="0" Style="{StaticResource CardPanel}" Padding="12,10" Margin="0,0,0,10">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="160"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Search Input -->
+                        <TextBox Grid.Column="0" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
+                                 Padding="10,6" Margin="0,0,10,0" FontSize="13">
+                            <TextBox.Resources>
+                                <VisualBrush x:Key="HintBrush" TileMode="None" Stretch="None" AlignmentX="Left">
+                                    <VisualBrush.Visual>
+                                        <TextBlock Text="🔍 Search Product, SKU, Barcode, Size..." Foreground="{StaticResource TextMutedBrush}"/>
+                                    </VisualBrush.Visual>
+                                </VisualBrush>
+                            </TextBox.Resources>
+                        </TextBox>
+
+                        <!-- Category Selector -->
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}"
+                                  Margin="0,0,10,0"/>
+
+                        <!-- Low Stock Toggle -->
+                        <CheckBox Grid.Column="2" Content="⚠️ Low Stock Only" IsChecked="{Binding LowStockOnly}"
+                                  VerticalAlignment="Center" Foreground="{StaticResource WarningBrush}" FontWeight="SemiBold" Margin="0,0,14,0"/>
+
+                        <!-- Action Buttons -->
+                        <StackPanel Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Command="{Binding OpenAddCategoryModalCommand}" Content="🏷️ + Category" Margin="0,0,6,0" Padding="10,6"/>
+                            <Button Command="{Binding OpenAddProductModalCommand}" Content="➕ Add Product" Style="{StaticResource PrimaryButton}" Margin="0,0,6,0" Padding="10,6"/>
+                            <Button Command="{Binding ImportCsvCommand}" Content="📥 CSV" Margin="0,0,6,0" Padding="8,6"/>
+                            <Button Command="{Binding ExportCsvCommand}" Content="📤 Export" Padding="8,6"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Main Catalog DataGrid -->
+                <Border Grid.Row="1" Style="{StaticResource CardPanel}" Padding="0" Margin="0,0,0,10" MinHeight="220">
+                    <DataGrid ItemsSource="{Binding Products}" SelectedItem="{Binding SelectedProduct}" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                        <DataGrid.Columns>
+                            <!-- Low Stock Indicator -->
+                            <DataGridTemplateColumn Header="STATUS" Width="92">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border CornerRadius="4" Padding="6,2" HorizontalAlignment="Left">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="#064E3B"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsLowStock}" Value="True">
+                                                            <Setter Property="Background" Value="#7F1D1D"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock FontSize="10.5" FontWeight="Bold">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Text" Value="IN STOCK"/>
+                                                        <Setter Property="Foreground" Value="#6EE7B7"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsLowStock}" Value="True">
+                                                                <Setter Property="Text" Value="LOW"/>
+                                                                <Setter Property="Foreground" Value="#FCA5A5"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <!-- Product Name & Category -->
+                            <DataGridTemplateColumn Header="PRODUCT &amp; CATEGORY" Width="2.2*" MinWidth="130">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{Binding Category}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <!-- SKU & Barcode -->
+                            <DataGridTemplateColumn Header="SKU / BARCODE" Width="1.6*" MinWidth="110">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Sku}" FontWeight="SemiBold" FontSize="11.5" Foreground="#C7D2FE"/>
+                                            <TextBlock Text="{Binding Barcode}" FontFamily="Consolas" FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <!-- MRP -->
+                            <DataGridTextColumn Header="MRP" Binding="{Binding SellingPrice, StringFormat='₹{0:N2}'}" Width="85" FontWeight="Bold" Foreground="{StaticResource SuccessBrush}"/>
+
+                            <!-- Cost & Tax -->
+                            <DataGridTemplateColumn Header="COST / TAX" Width="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding CostPrice, StringFormat='₹{0:N2}'}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                            <TextBlock Text="{Binding TaxRate, StringFormat='GST {0:0.#}%'}" FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <!-- Total Stock Column -->
+                            <DataGridTemplateColumn Header="TOTAL STOCK" Width="120">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border Background="#1E293B" CornerRadius="4" Padding="6,3" HorizontalAlignment="Left">
+                                            <TextBlock Text="{Binding TotalStock, StringFormat='{}{0} Units'}" FontWeight="Bold" FontSize="11.5">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="#6EE7B7"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding TotalStock}" Value="0">
+                                                                <Setter Property="Foreground" Value="#F87171"/>
+                                                                <Setter Property="Text" Value="0 (None)"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <!-- Edit / Delete Master Actions -->
+                            <DataGridTemplateColumn Header="ACTIONS" Width="235">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                            <Button Content="📦 Stock" Command="{Binding DataContext.SelectProductCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}" Style="{StaticResource PrimaryButton}" Padding="7,3" Margin="0,0,4,0" FontSize="11"
+                                                    ToolTip="View and manage size variants and stock"/>
+                                            <Button Content="✏️ Edit" Command="{Binding DataContext.OpenEditProductModalCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}" Padding="7,3" Margin="0,0,4,0" FontSize="11" ToolTip="Edit Product Master Details"/>
+                                            <Button Content="🗑️ Delete" Command="{Binding DataContext.DeleteProductCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}" Style="{StaticResource DangerButton}" Padding="7,3" FontSize="11" ToolTip="Permanently delete product and all variants/stock"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Border>
+
+                <!-- Bottom: Apparel Variant Matrix Panel for Selected Product -->
+                <Border Grid.Row="2" Style="{StaticResource CardPanel}" Padding="12" Margin="0,0,0,8"
+                        Visibility="{Binding HasSelectedProduct, Converter={StaticResource BoolToVis}}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Variant Header -->
+                        <Grid Grid.Row="0" Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="VARIANTS FOR: " FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource PrimaryLightBrush}"/>
+                                <TextBlock Text="{Binding SelectedProduct.Name}" FontSize="12" FontWeight="Bold" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis" MaxWidth="280"/>
+                                <Border Background="#312E81" CornerRadius="4" Padding="6,2" Margin="8,0,0,0">
+                                    <TextBlock Text="{Binding SelectedProduct.TotalStock, StringFormat='Stock: {0} pcs'}" FontWeight="Bold" FontSize="11" Foreground="#C7D2FE"/>
+                                </Border>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Command="{Binding ClearSelectedProductStockCommand}" CommandParameter="{Binding SelectedProduct}"
+                                        Content="🗑️ Reset Stock (0)" Style="{StaticResource DangerButton}" Margin="0,0,6,0" Padding="8,4" FontSize="11.5"
+                                        ToolTip="Reset inventory stock count for all sizes of this product to 0"/>
+                                <Button Command="{Binding QuickGenerateStandardSizesCommand}" Content="⚡ S-XL (50 Units)"
+                                        Style="{StaticResource SuccessButton}" Margin="0,0,6,0" Padding="9,4" FontSize="11.5"
+                                        ToolTip="Auto-create S, M, L, XL with 50 units of stock"/>
+                                <Button Command="{Binding OpenAddVariantModalCommand}" Content="➕ Add Size/Variant"
+                                        Style="{StaticResource PrimaryButton}" Padding="9,4" FontSize="11.5"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Empty State when product has 0 variants / 0 stock -->
+                        <Border Grid.Row="1" Visibility="{Binding HasNoVariants, Converter={StaticResource BoolToVis}}"
+                                Background="#0F172A" BorderBrush="#3B82F6" BorderThickness="1.5" CornerRadius="8" Padding="16,12" Margin="0,2,0,2">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="📦 No size variants or stock added yet for this product!" FontSize="13" FontWeight="Bold" Foreground="#FFFFFF" HorizontalAlignment="Center" Margin="0,0,0,4"/>
+                                <TextBlock Text="In retail apparel, stock is tracked per size (S, M, L, XL). Choose an option below to add stock:" FontSize="11.5" Foreground="{StaticResource TextSecondaryBrush}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Command="{Binding QuickGenerateStandardSizesCommand}" Content="⚡ Quick-Add Standard Sizes (S, M, L, XL - 50 Units Total)"
+                                            Style="{StaticResource SuccessButton}" Padding="14,6" Margin="0,0,10,0" FontSize="12" FontWeight="Bold"/>
+                                    <Button Command="{Binding OpenAddVariantModalCommand}" Content="➕ Add Custom Size / Single Stock"
+                                            Style="{StaticResource PrimaryButton}" Padding="14,6" FontSize="12"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Variants DataGrid when variants exist -->
+                        <DataGrid Grid.Row="1" ItemsSource="{Binding SelectedProduct.Variants}" MaxHeight="190"
+                                  Visibility="{Binding HasVariants, Converter={StaticResource BoolToVis}}" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="SIZE" Binding="{Binding Size}" Width="65" FontWeight="Bold"/>
+                                <DataGridTextColumn Header="COLOR" Binding="{Binding Color}" Width="1*" MinWidth="75"/>
+                                <DataGridTemplateColumn Header="FABRIC / FIT" Width="1.2*" MinWidth="95">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Fabric}" FontSize="11" Foreground="#FFFFFF"/>
+                                                <TextBlock Text="{Binding FitType}" FontSize="10" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Header="SKU / BARCODE" Width="1.6*" MinWidth="110">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding SkuVariant}" FontSize="11" FontWeight="SemiBold" Foreground="#C7D2FE"/>
+                                                <TextBlock Text="{Binding BarcodeVariant}" FontFamily="Consolas" FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <!-- Interactive Stock Column (Full room for Adjust Stock) -->
+                                <DataGridTemplateColumn Header="STOCK UNITS" Width="260">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Border Background="#064E3B" CornerRadius="4" Padding="6,2" Margin="0,0,5,0" MinWidth="34">
+                                                    <TextBlock Text="{Binding StockQuantity}" FontWeight="Bold" Foreground="#6EE7B7" HorizontalAlignment="Center" FontSize="11.5"/>
+                                                </Border>
+                                                <Button Content="-" Command="{Binding DataContext.QuickDecrementStockCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                        CommandParameter="{Binding}" Width="24" Height="24" Padding="0" Margin="0,0,3,0" ToolTip="Quick -1 unit"/>
+                                                <Button Content="+" Command="{Binding DataContext.QuickIncrementStockCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                        CommandParameter="{Binding}" Width="24" Height="24" Padding="0" Margin="0,0,3,0" ToolTip="Quick +1 unit"/>
+                                                <Button Content="0" Command="{Binding DataContext.QuickClearVariantStockCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                        CommandParameter="{Binding}" Width="24" Height="24" Padding="0" Margin="0,0,5,0" Style="{StaticResource DangerButton}"
+                                                        ToolTip="Quick clear this size's stock to 0 units"/>
+                                                <Button Content="📦 Adjust Stock" Command="{Binding DataContext.OpenAddStockModalCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                        CommandParameter="{Binding}" Style="{StaticResource PrimaryButton}" Padding="8,4" FontSize="11" FontWeight="SemiBold" ToolTip="Add, Deduct, or Set exact stock"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <!-- Delete Variant Action (Full room for Delete) -->
+                                <DataGridTemplateColumn Header="DELETE" Width="105">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="🗑️ Delete" Command="{Binding DataContext.DeleteVariantCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}" Style="{StaticResource DangerButton}" Padding="8,4" FontSize="11" ToolTip="Permanently remove this size variant"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </Border>
+
+                <!-- Status message -->
+                <Border Grid.Row="3" Background="{StaticResource BgCardBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,5">
+                    <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource PrimaryLightBrush}" FontWeight="SemiBold" FontSize="12"/>
+                </Border>
+            </Grid>
+        </ScrollViewer>
+
+        <!-- Add/Edit Product Modal Overlay -->
+        <Border Background="#CC000000" Visibility="{Binding IsEditProductModalOpen, Converter={StaticResource BoolToVis}}">
+            <Border Style="{StaticResource CardPanel}" Width="580" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="24">
+                <StackPanel>
+                    <TextBlock Text="Product Master Details" FontWeight="Bold" FontSize="16" Foreground="#FFFFFF" Margin="0,0,0,16"/>
+
+                    <Grid Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                            <TextBlock Text="Product SKU *" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding EditingProduct.Sku, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                            <TextBlock Text="Master Barcode *" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding EditingProduct.Barcode, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <TextBlock Text="Product Name *" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                    <TextBox Text="{Binding EditingProduct.Name, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10"/>
+
+                    <Grid Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                            <Grid Margin="0,0,0,4">
+                                <TextBlock Text="Category (Select or Type New)" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                                <Button Command="{Binding OpenAddCategoryModalCommand}" Content="+ Add Category" HorizontalAlignment="Right" Padding="8,2" FontSize="11" Style="{StaticResource PrimaryButton}"/>
+                            </Grid>
+                            <ComboBox IsEditable="True" ItemsSource="{Binding CategorySuggestions}" Text="{Binding EditingProduct.Category, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                            <TextBlock Text="Tax / GST %" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding EditingProduct.TaxRate, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                            <TextBlock Text="Selling Price (MRP)" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding EditingProduct.SellingPrice, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="6,0,6,0">
+                            <TextBlock Text="Cost Price" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding EditingProduct.CostPrice, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" Margin="6,0,6,0">
+                            <TextBlock Text="Low Stock Limit" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding EditingProduct.LowStockThreshold, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="3" Margin="6,0,0,0" Visibility="{Binding IsNewProduct, Converter={StaticResource BoolToVis}}">
+                            <TextBlock Text="Initial Total Stock" Foreground="#6EE7B7" FontWeight="Bold" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding NewProductInitialStock, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold" Foreground="#6EE7B7"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <TextBlock Text="Description" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                    <TextBox Text="{Binding EditingProduct.Description, UpdateSourceTrigger=PropertyChanged}" Height="60" TextWrapping="Wrap" Margin="0,0,0,20"/>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="Cancel" Command="{Binding RefreshCommand}" Click="CloseProductModal_Click" Margin="0,0,8,0" Padding="16,8"/>
+                        <Button Content="Save Product" Command="{Binding SaveProductCommand}" Style="{StaticResource SuccessButton}" Padding="20,8"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Border>
+
+        <!-- Add Variant Modal Overlay -->
+        <Border Background="#CC000000" Visibility="{Binding IsAddVariantModalOpen, Converter={StaticResource BoolToVis}}">
+            <Border Style="{StaticResource CardPanel}" Width="520" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="24">
+                <StackPanel>
+                    <TextBlock Text="Add Apparel Variant (Size &amp; Color)" FontWeight="Bold" FontSize="16" Foreground="#FFFFFF" Margin="0,0,0,16"/>
+
+                    <Grid Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                            <TextBlock Text="Size (e.g. S, M, L, XL, 38, 40) *" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding NewVariant.Size, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                            <TextBlock Text="Color (e.g. Navy, Olive, White) *" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding NewVariant.Color, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                            <TextBlock Text="Fabric / Material" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding NewVariant.Fabric, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                            <TextBlock Text="Fit Type (Slim, Regular, Relaxed)" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding NewVariant.FitType, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                            <TextBlock Text="Scannable Barcode *" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding NewVariant.BarcodeVariant, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                            <TextBlock Text="Variant SKU" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding NewVariant.SkuVariant, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                            <TextBlock Text="Initial Stock Quantity" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding NewVariant.StockQuantity, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                            <TextBlock Text="Price Delta (Optional)" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding NewVariant.AdditionalPrice, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="Cancel" Click="CloseVariantModal_Click" Margin="0,0,8,0" Padding="16,8"/>
+                        <Button Content="Save Variant" Command="{Binding SaveVariantCommand}" Style="{StaticResource SuccessButton}" Padding="20,8"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Border>
+
+        <!-- Inventory Stock Adjustment Modal Overlay -->
+        <Border Background="#CC000000" Visibility="{Binding IsAddStockModalOpen, Converter={StaticResource BoolToVis}}">
+            <Border Style="{StaticResource CardPanel}" Width="520" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="24">
+                <StackPanel>
+                    <TextBlock Text="{Binding ModalTitle}" FontWeight="Bold" FontSize="16" Foreground="#FFFFFF" Margin="0,0,0,14"/>
+
+                    <!-- Mode Selector Buttons (Add, Deduct, Set) -->
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0" Content="➕ Add (Receive)" Command="{Binding SetStockAdjustmentModeCommand}" CommandParameter="Add"
+                                Margin="0,0,4,0" Padding="8,8" FontSize="12" FontWeight="SemiBold">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsAddMode}" Value="True">
+                                            <Setter Property="Background" Value="#2563EB"/>
+                                            <Setter Property="BorderBrush" Value="#60A5FA"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsAddMode}" Value="False">
+                                            <Setter Property="Background" Value="#1E293B"/>
+                                            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <Button Grid.Column="1" Content="➖ Deduct (Stock-Out)" Command="{Binding SetStockAdjustmentModeCommand}" CommandParameter="Deduct"
+                                Margin="2,0,2,0" Padding="8,8" FontSize="12" FontWeight="SemiBold">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsDeductMode}" Value="True">
+                                            <Setter Property="Background" Value="#DC2626"/>
+                                            <Setter Property="BorderBrush" Value="#F87171"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsDeductMode}" Value="False">
+                                            <Setter Property="Background" Value="#1E293B"/>
+                                            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <Button Grid.Column="2" Content="🎯 Set Exact (or 0)" Command="{Binding SetStockAdjustmentModeCommand}" CommandParameter="Set"
+                                Margin="4,0,0,0" Padding="8,8" FontSize="12" FontWeight="SemiBold">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsSetMode}" Value="True">
+                                            <Setter Property="Background" Value="#7C3AED"/>
+                                            <Setter Property="BorderBrush" Value="#A78BFA"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsSetMode}" Value="False">
+                                            <Setter Property="Background" Value="#1E293B"/>
+                                            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </Grid>
+
+                    <!-- Item Summary Card -->
+                    <Border Background="{StaticResource BgInputBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="{Binding SelectedProduct.Name}" FontWeight="Bold" FontSize="14" Foreground="#FFFFFF"/>
+                            <TextBlock Text="{Binding StockTargetVariant.DisplayName}" FontSize="12" Foreground="{StaticResource PrimaryLightBrush}" Margin="0,2,0,4"/>
+                            <TextBlock Text="{Binding StockTargetVariant.BarcodeVariant, StringFormat='Barcode: {0}'}" FontFamily="Consolas" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Current vs New Stock Comparison -->
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Background="#1E293B" CornerRadius="6" Padding="12,10" Margin="0,0,6,0">
+                            <StackPanel>
+                                <TextBlock Text="CURRENT STOCK" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
+                                <TextBlock Text="{Binding StockTargetVariant.StockQuantity, StringFormat='{}{0} Units'}" FontWeight="Bold" FontSize="18" Foreground="#FFFFFF" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="1" Background="#064E3B" CornerRadius="6" Padding="12,10" Margin="6,0,0,0">
+                            <StackPanel>
+                                <TextBlock Text="NEW TOTAL STOCK" FontSize="11" Foreground="#A7F3D0"/>
+                                <TextBlock Text="{Binding ExpectedNewStock, StringFormat='{}{0} Units'}" FontWeight="Bold" FontSize="18" Foreground="#6EE7B7" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- Quantity Input Field with Clear to 0 Button -->
+                    <TextBlock Text="{Binding InputQuantityLabel}" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,6"/>
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" Text="{Binding StockToAdd, UpdateSourceTrigger=PropertyChanged}" FontSize="18" FontWeight="Bold" Padding="10,6" Margin="0,0,8,0"/>
+                        <Button Grid.Column="1" Command="{Binding SetStockToZeroCommand}" Content="🗑️ Clear to 0"
+                                Style="{StaticResource DangerButton}" Padding="14,6" FontSize="12" FontWeight="SemiBold"
+                                ToolTip="Instantly set target stock to 0 units"/>
+                    </Grid>
+
+                    <!-- Quick Preset Chips -->
+                    <TextBlock Text="Quick Preset Numbers:" FontSize="11" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,6"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,22">
+                        <Button Content="0 (Clear)" Command="{Binding SetStockToZeroCommand}" Margin="0,0,6,0" Padding="12,5" FontSize="12" Style="{StaticResource DangerButton}"/>
+                        <Button Content="5" Command="{Binding SetStockToAddPresetCommand}" CommandParameter="5" Margin="0,0,6,0" Padding="12,5" FontSize="12"/>
+                        <Button Content="10" Command="{Binding SetStockToAddPresetCommand}" CommandParameter="10" Margin="0,0,6,0" Padding="12,5" FontSize="12"/>
+                        <Button Content="20" Command="{Binding SetStockToAddPresetCommand}" CommandParameter="20" Margin="0,0,6,0" Padding="12,5" FontSize="12"/>
+                        <Button Content="50" Command="{Binding SetStockToAddPresetCommand}" CommandParameter="50" Margin="0,0,6,0" Padding="12,5" FontSize="12"/>
+                        <Button Content="100" Command="{Binding SetStockToAddPresetCommand}" CommandParameter="100" Padding="12,5" FontSize="12"/>
+                    </StackPanel>
+
+                    <!-- Modal Actions -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="Cancel" Click="CloseStockModal_Click" Margin="0,0,8,0" Padding="16,8"/>
+                        <Button Content="{Binding ModalActionButtonText}" Command="{Binding ConfirmAddStockCommand}" Style="{StaticResource SuccessButton}" Padding="20,8" FontSize="13"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Border>
+
+        <!-- Add Category Modal Overlay -->
+        <Border Background="#CC000000" Visibility="{Binding IsAddCategoryModalOpen, Converter={StaticResource BoolToVis}}">
+            <Border Style="{StaticResource CardPanel}" Width="460" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="24">
+                <StackPanel>
+                    <Grid Margin="0,0,0,16">
+                        <TextBlock Text="🏷️ Add New Apparel Category" FontWeight="Bold" FontSize="16" Foreground="#FFFFFF"/>
+                        <Button Content="✕" Command="{Binding CloseAddCategoryModalCommand}" HorizontalAlignment="Right"
+                                Background="Transparent" Foreground="{StaticResource TextSecondaryBrush}" BorderThickness="0" FontSize="14" Padding="6,2"/>
+                    </Grid>
+
+                    <TextBlock Text="Category Name *" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                    <TextBox Text="{Binding NewCategoryName, UpdateSourceTrigger=PropertyChanged}" Padding="10,6" Margin="0,0,0,14" FontSize="14"/>
+
+                    <Grid Margin="0,0,0,14">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                            <TextBlock Text="HSN Code" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding NewCategoryHsn, UpdateSourceTrigger=PropertyChanged}" Padding="10,6"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                            <TextBlock Text="Default GST %" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding NewCategoryTaxRate, UpdateSourceTrigger=PropertyChanged}" Padding="10,6"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <TextBlock Text="Common Category Suggestions (Click to fill):" FontSize="11" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,6"/>
+                    <WrapPanel Margin="0,0,0,18">
+                        <Button Content="T-Shirts" Command="{Binding QuickSelectSuggestionCommand}" CommandParameter="T-Shirts" Margin="0,0,6,6" Padding="8,4" FontSize="11"/>
+                        <Button Content="Shirts" Command="{Binding QuickSelectSuggestionCommand}" CommandParameter="Shirts" Margin="0,0,6,6" Padding="8,4" FontSize="11"/>
+                        <Button Content="Jeans" Command="{Binding QuickSelectSuggestionCommand}" CommandParameter="Jeans" Margin="0,0,6,6" Padding="8,4" FontSize="11"/>
+                        <Button Content="Trousers" Command="{Binding QuickSelectSuggestionCommand}" CommandParameter="Trousers" Margin="0,0,6,6" Padding="8,4" FontSize="11"/>
+                        <Button Content="Kurtas" Command="{Binding QuickSelectSuggestionCommand}" CommandParameter="Kurtas" Margin="0,0,6,6" Padding="8,4" FontSize="11"/>
+                        <Button Content="Sarees" Command="{Binding QuickSelectSuggestionCommand}" CommandParameter="Sarees" Margin="0,0,6,6" Padding="8,4" FontSize="11"/>
+                        <Button Content="Dresses" Command="{Binding QuickSelectSuggestionCommand}" CommandParameter="Dresses" Margin="0,0,6,6" Padding="8,4" FontSize="11"/>
+                        <Button Content="Jackets" Command="{Binding QuickSelectSuggestionCommand}" CommandParameter="Jackets" Margin="0,0,6,6" Padding="8,4" FontSize="11"/>
+                        <Button Content="Kids Wear" Command="{Binding QuickSelectSuggestionCommand}" CommandParameter="Kids Wear" Margin="0,0,6,6" Padding="8,4" FontSize="11"/>
+                    </WrapPanel>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="Cancel" Command="{Binding CloseAddCategoryModalCommand}" Margin="0,0,8,0" Padding="16,8"/>
+                        <Button Content="✓ Save Category" Command="{Binding SaveCategoryCommand}" Style="{StaticResource SuccessButton}" Padding="20,8"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Border>
+    </Grid>
+</UserControl>
