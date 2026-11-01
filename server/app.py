@@ -460,6 +460,34 @@ def render_policy(title: str, content: str) -> str:
 # ---------------------------------------------------------
 class ProductionRazorpayHandler(BaseHTTPRequestHandler):
 
+    def do_HEAD(self):
+        parsed = urlparse(self.path)
+        path = parsed.path
+        if path == "/download/ApparelPOS.exe":
+            cache_path = os.path.join(SERVER_DIR, "ApparelPOS.exe")
+            if not os.path.exists(cache_path) or os.path.getsize(cache_path) < 1000000:
+                local_pub = os.path.join(BASE_DIR, "publish", "ApparelPOS.exe")
+                if os.path.exists(local_pub) and os.path.getsize(local_pub) > 1000000:
+                    import shutil
+                    shutil.copyfile(local_pub, cache_path)
+                else:
+                    gh_url = "https://github.com/pawarswapnil9130/business/releases/download/v1.0.0/ApparelPOS.exe"
+                    req = urllib.request.Request(gh_url, headers={"User-Agent": "Mozilla/5.0"})
+                    with urllib.request.urlopen(req) as resp, open(cache_path, "wb") as f_out:
+                        while chunk := resp.read(1024 * 1024):
+                            f_out.write(chunk)
+
+            file_size = os.path.getsize(cache_path)
+            self.send_response(200)
+            self.send_header("Content-Type", "application/octet-stream")
+            self.send_header("Content-Disposition", 'attachment; filename="ApparelPOS.exe"')
+            self.send_header("Content-Length", str(file_size))
+            self.end_headers()
+            return
+        else:
+            self.send_response(200)
+            self.end_headers()
+
     def do_POST(self):
         parsed = urlparse(self.path)
         path = parsed.path
@@ -538,8 +566,34 @@ class ProductionRazorpayHandler(BaseHTTPRequestHandler):
         path = parsed.path
         params = parse_qs(parsed.query)
 
+        # Direct Binary Download (Zero-Redirection for Microsoft Store)
+        if path == "/download/ApparelPOS.exe":
+            cache_path = os.path.join(SERVER_DIR, "ApparelPOS.exe")
+            if not os.path.exists(cache_path) or os.path.getsize(cache_path) < 1000000:
+                local_pub = os.path.join(BASE_DIR, "publish", "ApparelPOS.exe")
+                if os.path.exists(local_pub) and os.path.getsize(local_pub) > 1000000:
+                    import shutil
+                    shutil.copyfile(local_pub, cache_path)
+                else:
+                    gh_url = "https://github.com/pawarswapnil9130/business/releases/download/v1.0.0/ApparelPOS.exe"
+                    req = urllib.request.Request(gh_url, headers={"User-Agent": "Mozilla/5.0"})
+                    with urllib.request.urlopen(req) as resp, open(cache_path, "wb") as f_out:
+                        while chunk := resp.read(1024 * 1024):
+                            f_out.write(chunk)
+
+            file_size = os.path.getsize(cache_path)
+            self.send_response(200)
+            self.send_header("Content-Type", "application/octet-stream")
+            self.send_header("Content-Disposition", 'attachment; filename="ApparelPOS.exe"')
+            self.send_header("Content-Length", str(file_size))
+            self.end_headers()
+            with open(cache_path, "rb") as f:
+                while chunk := f.read(1024 * 1024):
+                    self.wfile.write(chunk)
+            return
+
         # Main Landing Page
-        if path == "/renew" or path == "/":
+        elif path == "/renew" or path == "/":
             mc = params.get('mc', [''])[0].strip().upper()
             store = params.get('store', [''])[0].strip()
             if not mc:
