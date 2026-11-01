@@ -101,7 +101,11 @@ public class MainViewModel : ViewModelBase
 
         _currentView = billingVm;
 
-        NavigateToBillingCommand = new RelayCommand(() => CurrentView = BillingVm);
+        NavigateToBillingCommand = new RelayCommand(() =>
+        {
+            CurrentView = BillingVm;
+            _ = BillingVm.LoadStoreSettingsAsync();
+        });
         NavigateToInventoryCommand = new RelayCommand(() => { CurrentView = InventoryVm; _ = InventoryVm.LoadProductsAsync(); });
         NavigateToBarcodeCommand = new RelayCommand(() => CurrentView = BarcodeVm);
         NavigateToAnalyticsCommand = new RelayCommand(() => { CurrentView = AnalyticsVm; _ = AnalyticsVm.LoadAnalyticsAsync(); });

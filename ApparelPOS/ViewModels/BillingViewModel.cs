@@ -351,7 +351,34 @@ public class BillingViewModel : ViewModelBase
     public BitmapSource? UpiQrCodeSource
     {
         get => _upiQrCodeSource;
-        set => SetProperty(ref _upiQrCodeSource, value);
+        set
+        {
+            if (SetProperty(ref _upiQrCodeSource, value))
+            {
+                OnPropertyChanged(nameof(HasUpiQrCode));
+                OnPropertyChanged(nameof(HasUpiError));
+            }
+        }
+    }
+
+    public bool HasUpiQrCode => UpiQrCodeSource != null;
+    public bool HasUpiError => !HasUpiQrCode;
+
+    private string _upiErrorMessage = string.Empty;
+    public string UpiErrorMessage
+    {
+        get => _upiErrorMessage;
+        set => SetProperty(ref _upiErrorMessage, value);
+    }
+
+    public string UpiPayeeDisplay
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(_storeSettings?.UpiVpa)) return string.Empty;
+            var payee = string.IsNullOrWhiteSpace(_storeSettings.UpiPayeeName) ? _storeSettings.StoreName : _storeSettings.UpiPayeeName;
+            return $"Paying To: {payee} ({_storeSettings.UpiVpa})";
+        }
     }
 
     private bool _isUpiModalOpen;
@@ -433,7 +460,7 @@ public class BillingViewModel : ViewModelBase
         CloseReceiptPreviewCommand = new RelayCommand(CloseReceiptPreview);
         PrintReceiptPreviewCommand = new RelayCommand(PrintReceiptFromPreview);
         WindowsPrintCommand = new RelayCommand(WindowsPrint);
-        ToggleUpiModalCommand = new RelayCommand(() => IsUpiModalOpen = !IsUpiModalOpen);
+        ToggleUpiModalCommand = new AsyncRelayCommand(ToggleUpiModalAsync);
         OpenCatalogModalCommand = new AsyncRelayCommand(() => OpenCatalogModalAsync());
         CloseCatalogModalCommand = new RelayCommand(() => IsCatalogModalOpen = false);
         AddPickerItemToCartCommand = new RelayCommand<CatalogPickerItem>(AddPickerItemToCart);
@@ -574,10 +601,36 @@ public class BillingViewModel : ViewModelBase
         return false;
     }
 
-    private async Task LoadStoreSettingsAsync()
+    public async Task LoadStoreSettingsAsync()
     {
         _storeSettings = await _billingService.GetStoreSettingsAsync();
         OnPropertyChanged(nameof(CurrencySymbol));
+        OnPropertyChanged(nameof(UpiPayeeDisplay));
+        if (PaymentMethod == "UPI" || IsUpiModalOpen)
+        {
+            GenerateUpiQrCode();
+        }
+    }
+
+    private async Task ToggleUpiModalAsync()
+    {
+        if (IsUpiModalOpen)
+        {
+            IsUpiModalOpen = false;
+            return;
+        }
+
+        // 1. Fetch fresh store settings from DB in case edited in Settings
+        await LoadStoreSettingsAsync();
+
+        // 2. Select UPI payment mode
+        PaymentMethod = "UPI";
+
+        // 3. Generate the dynamic UPI QR code
+        GenerateUpiQrCode();
+
+        // 4. Open modal
+        IsUpiModalOpen = true;
     }
 
     public async Task HandleBarcodeScanAsync()
@@ -794,15 +847,35 @@ public class BillingViewModel : ViewModelBase
 
     private void GenerateUpiQrCode()
     {
-        if (string.IsNullOrWhiteSpace(_storeSettings.UpiVpa) || GrandTotal <= 0)
+        if (string.IsNullOrWhiteSpace(_storeSettings?.UpiVpa))
         {
             UpiQrCodeSource = null;
+            UpiErrorMessage = "⚠️ Merchant UPI ID not configured!\nGo to System Setup -> Offline UPI Configuration and enter your UPI ID (e.g. swappawar4912@okhdfcbank).";
+            OnPropertyChanged(nameof(UpiErrorMessage));
+            OnPropertyChanged(nameof(HasUpiError));
+            OnPropertyChanged(nameof(HasUpiQrCode));
             return;
         }
 
+        if (GrandTotal <= 0)
+        {
+            UpiQrCodeSource = null;
+            UpiErrorMessage = "⚠️ Total is ₹0.00.\nScan garments or add items to the cart before generating UPI QR.";
+            OnPropertyChanged(nameof(UpiErrorMessage));
+            OnPropertyChanged(nameof(HasUpiError));
+            OnPropertyChanged(nameof(HasUpiQrCode));
+            return;
+        }
+
+        UpiErrorMessage = string.Empty;
         var invTemp = $"INV-{DateTime.Today:yyMMdd}-{DateTime.Now.Millisecond:D3}";
-        var upiUri = $"upi://pay?pa={_storeSettings.UpiVpa}&pn={Uri.EscapeDataString(_storeSettings.UpiPayeeName)}&am={GrandTotal:0.00}&tn=ApparelBill_{invTemp}&cu=INR";
+        var payee = string.IsNullOrWhiteSpace(_storeSettings.UpiPayeeName) ? _storeSettings.StoreName : _storeSettings.UpiPayeeName;
+        var upiUri = $"upi://pay?pa={_storeSettings.UpiVpa.Trim()}&pn={Uri.EscapeDataString(payee.Trim())}&am={GrandTotal:0.00}&tn=ApparelBill_{invTemp}&cu=INR";
         UpiQrCodeSource = _barcodeService.GenerateQrCodeImageSource(upiUri, 260);
+        OnPropertyChanged(nameof(UpiPayeeDisplay));
+        OnPropertyChanged(nameof(UpiErrorMessage));
+        OnPropertyChanged(nameof(HasUpiError));
+        OnPropertyChanged(nameof(HasUpiQrCode));
     }
 
     public async Task CheckoutAndPrintAsync()
