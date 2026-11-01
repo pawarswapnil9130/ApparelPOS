@@ -277,6 +277,12 @@ MAIN_HTML = """<!DOCTYPE html>
 
         <div class="footer">
             Hardware-locked RSA-2048 • Key generated instantly upon verified payment
+            <div style="margin-top:14px;padding-top:12px;border-top:1px solid #334155;display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
+                <a href="/terms-and-conditions" style="color:#94A3B8;text-decoration:none;font-size:11px;">Terms &amp; Conditions</a>
+                <a href="/privacy-policy" style="color:#94A3B8;text-decoration:none;font-size:11px;">Privacy Policy</a>
+                <a href="/refund-policy" style="color:#94A3B8;text-decoration:none;font-size:11px;">Refund Policy</a>
+                <a href="/contact-us" style="color:#94A3B8;text-decoration:none;font-size:11px;">Contact Us</a>
+            </div>
         </div>
     </div>
 
@@ -416,6 +422,35 @@ MAIN_HTML = """<!DOCTYPE html>
             });
         }
     </script>
+</body>
+</html>
+"""
+
+def render_policy(title: str, content: str) -> str:
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title} - ApparelPOS</title>
+    <style>
+        * {{ box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }}
+        body {{ background: #0F172A; color: #F8FAFC; min-height: 100vh; padding: 24px 16px; display: flex; justify-content: center; }}
+        .policy-card {{ background: #1E293B; border: 1px solid #334155; border-radius: 16px; max-width: 680px; width: 100%; padding: 32px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }}
+        h1 {{ font-size: 24px; font-weight: 700; color: #FFFFFF; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #334155; }}
+        h3 {{ font-size: 15px; font-weight: 600; color: #38BDF8; margin-top: 18px; margin-bottom: 6px; }}
+        p {{ font-size: 13.5px; line-height: 1.7; color: #CBD5E1; margin-bottom: 10px; }}
+        a.back-btn {{ display: inline-block; background: #334155; color: #F8FAFC; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; margin-bottom: 20px; }}
+        a.back-btn:hover {{ background: #475569; }}
+    </style>
+</head>
+<body>
+    <div class="policy-card">
+        <a href="/" class="back-btn">← Back to License Renewal</a>
+        <h1>{title}</h1>
+        <div style="font-size:12px;color:#94A3B8;margin-bottom:16px;">Last updated: November 2026 • ApparelPOS Retail Systems</div>
+        {content}
+    </div>
 </body>
 </html>
 """
@@ -571,9 +606,70 @@ class ProductionRazorpayHandler(BaseHTTPRequestHandler):
 
             self.send_response(200)
             self.send_header("Content-Type", "text/csv")
-            self.send_header("Content-Disposition", "attachment; filename=apparelpos_sales_ledger.csv")
-            self.end_headers()
-            self.wfile.write(csv_data.encode('utf-8'))
+        elif path == "/terms-and-conditions":
+            html = render_policy("Terms and Conditions", """
+                <h3>1. Introduction &amp; Scope</h3>
+                <p>Welcome to <strong>ApparelPOS</strong>. These Terms &amp; Conditions govern your purchase and use of the ApparelPOS offline desktop Point of Sale (POS) and inventory management software.</p>
+                <br>
+                <h3>2. Commercial License &amp; Validity</h3>
+                <p>Upon payment of the annual fee of <strong>₹249/year</strong>, you are granted a non-transferable, node-locked commercial license valid for exactly 365 days from the date of issuance on one designated personal computer (identified by unique hardware identifiers).</p>
+                <br>
+                <h3>3. Software Delivery &amp; Activation</h3>
+                <p>ApparelPOS is delivered digitally. Upon verified payment, an RSA-2048 cryptographic license key is generated instantly on your screen to unlock the software offline.</p>
+                <br>
+                <h3>4. Local Data Ownership</h3>
+                <p>All sales, customer details, inventory matrices, and financial ledgers remain 100% on your local hard drive. ApparelPOS does not collect or upload your commercial records.</p>
+            """)
+            self.respond_html(html)
+            return
+
+        elif path == "/privacy-policy":
+            html = render_policy("Privacy Policy", """
+                <h3>1. Commitment to Data Privacy</h3>
+                <p>At <strong>ApparelPOS</strong>, we believe business accounting data belongs exclusively to the store owner. Our desktop software operates 100% offline with zero cloud telemetry.</p>
+                <br>
+                <h3>2. Information Collected for Licensing</h3>
+                <p>When purchasing an annual license via our web portal, we collect only minimal information necessary to issue and invoice your license:</p>
+                <ul style="margin-left: 20px; line-height: 1.8;">
+                    <li>Machine Code (Immutable hardware hash for cryptographic node-locking)</li>
+                    <li>Store / Business Name</li>
+                    <li>Owner / Contact Name</li>
+                    <li>Mobile Number (for transaction receipt and payment verification)</li>
+                </ul>
+                <br>
+                <h3>3. Zero Third-Party Sharing</h3>
+                <p>We do not sell, rent, or trade your contact information. Payment processing is handled securely by Razorpay using bank-grade encryption.</p>
+            """)
+            self.respond_html(html)
+            return
+
+        elif path == "/refund-policy":
+            html = render_policy("Refund &amp; Cancellation Policy", """
+                <h3>1. 7-Day Money Back Guarantee</h3>
+                <p>We want every shopkeeper to be completely confident in ApparelPOS. If the software fails to install or operate on your designated Windows PC due to technical incompatibility, you are eligible for a <strong>100% refund within 7 days</strong> of purchase.</p>
+                <br>
+                <h3>2. How to Request a Refund</h3>
+                <p>To request a refund, email our support team with your Payment ID and Machine Code. We will review and process your request within 24 to 48 hours.</p>
+                <br>
+                <h3>3. Settlement Timeline</h3>
+                <p>Approved refunds are credited back to your original payment method (Bank Account / UPI / Card) within <strong>5 to 7 business days</strong> as per standard banking processing cycles.</p>
+            """)
+            self.respond_html(html)
+            return
+
+        elif path == "/contact-us":
+            html = render_policy("Contact Us", """
+                <h3>Customer Support &amp; Inquiries</h3>
+                <p>We are here to assist clothing store owners with installation, printer setups, and licensing queries.</p>
+                <br>
+                <div style="background:#0F172A;padding:16px;border-radius:10px;border:1px solid #334155;line-height:1.9;">
+                    <p><strong>Business Name:</strong> ApparelPOS / Velvet Thread Software</p>
+                    <p><strong>Support Email:</strong> <a href="mailto:pawarswapnil9130@gmail.com" style="color:#38BDF8;">pawarswapnil9130@gmail.com</a></p>
+                    <p><strong>Operating Hours:</strong> Monday – Saturday: 9:00 AM – 8:00 PM IST</p>
+                    <p><strong>Response Time:</strong> Within 24 business hours</p>
+                </div>
+            """)
+            self.respond_html(html)
             return
 
         else:
