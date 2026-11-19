@@ -131,6 +131,15 @@ public class AppDbContext : DbContext
             Database.ExecuteSqlRaw("PRAGMA synchronous = NORMAL;");
             Database.ExecuteSqlRaw("PRAGMA busy_timeout = 5000;");
             Database.ExecuteSqlRaw("PRAGMA temp_store = MEMORY;");
+
+            try
+            {
+                Database.ExecuteSqlRaw("ALTER TABLE StoreSettings ADD COLUMN SelectedTheme TEXT DEFAULT 'ModernDark';");
+            }
+            catch
+            {
+                // Column may already exist
+            }
         }
         catch
         {

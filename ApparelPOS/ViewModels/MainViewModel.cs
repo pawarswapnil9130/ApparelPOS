@@ -9,12 +9,28 @@ public class MainViewModel : ViewModelBase
 {
     private readonly ILicenseService _licenseService;
     private readonly IBillingService _billingService;
+    private readonly IThemeService _themeService;
 
     public BillingViewModel BillingVm { get; }
     public InventoryViewModel InventoryVm { get; }
     public BarcodeGeneratorViewModel BarcodeVm { get; }
     public AnalyticsViewModel AnalyticsVm { get; }
     public SettingsViewModel SettingsVm { get; }
+
+    public IReadOnlyList<ThemeOption> ThemeOptions => _themeService.AvailableThemes;
+
+    public ThemeOption? SelectedThemeOption
+    {
+        get => _themeService.CurrentThemeOption;
+        set
+        {
+            if (value != null && value.Id != _themeService.CurrentTheme)
+            {
+                _themeService.ApplyTheme(value.Id);
+                OnPropertyChanged(nameof(SelectedThemeOption));
+            }
+        }
+    }
 
     private ViewModelBase _currentView;
     public ViewModelBase CurrentView
@@ -76,12 +92,14 @@ public class MainViewModel : ViewModelBase
     public IRelayCommand NavigateToAnalyticsCommand { get; }
     public IRelayCommand NavigateToSettingsCommand { get; }
     public IRelayCommand OpenActivationCommand { get; }
+    public IRelayCommand<AppTheme> SwitchThemeCommand { get; }
 
     private readonly IServiceProvider _serviceProvider;
 
     public MainViewModel(
         ILicenseService licenseService,
         IBillingService billingService,
+        IThemeService themeService,
         IServiceProvider serviceProvider,
         BillingViewModel billingVm,
         InventoryViewModel inventoryVm,
@@ -91,6 +109,7 @@ public class MainViewModel : ViewModelBase
     {
         _licenseService = licenseService;
         _billingService = billingService;
+        _themeService = themeService;
         _serviceProvider = serviceProvider;
 
         BillingVm = billingVm;
@@ -111,6 +130,13 @@ public class MainViewModel : ViewModelBase
         NavigateToAnalyticsCommand = new RelayCommand(() => { CurrentView = AnalyticsVm; _ = AnalyticsVm.LoadAnalyticsAsync(); });
         NavigateToSettingsCommand = new RelayCommand(() => CurrentView = SettingsVm);
         OpenActivationCommand = new RelayCommand(OpenActivation);
+        SwitchThemeCommand = new RelayCommand<AppTheme>(theme =>
+        {
+            _themeService.ApplyTheme(theme);
+            OnPropertyChanged(nameof(SelectedThemeOption));
+        });
+
+        _themeService.ThemeChanged += _ => OnPropertyChanged(nameof(SelectedThemeOption));
 
         // Timer for clock in top bar
         var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };

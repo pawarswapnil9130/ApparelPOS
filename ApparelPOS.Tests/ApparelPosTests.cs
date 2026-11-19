@@ -338,5 +338,33 @@ xgrJNTIGOBu7LHBffRDCQ93MMJlnqk+i6UudpLs/4dKWe4eMfQzf1aDXGeR4tsOh
         Assert.Equal("Commercial Annual", activateResult.LicenseType);
         Assert.Equal("Test Shopkeeper", activateResult.CustomerName);
     }
+
+    [Fact]
+    public void Test_FiveThemes_AvailableAndConfigured()
+    {
+        var themeService = new ThemeService();
+        Assert.Equal(5, themeService.AvailableThemes.Count);
+
+        var expectedThemes = new[]
+        {
+            AppTheme.ModernDark,
+            AppTheme.CrispLight,
+            AppTheme.OceanNavy,
+            AppTheme.EmeraldLuxury,
+            AppTheme.RoyalVelvet
+        };
+
+        foreach (var expected in expectedThemes)
+        {
+            var found = themeService.AvailableThemes.FirstOrDefault(t => t.Id == expected);
+            Assert.NotNull(found);
+            Assert.False(string.IsNullOrWhiteSpace(found.Name));
+            Assert.False(string.IsNullOrWhiteSpace(found.Icon));
+            Assert.False(string.IsNullOrWhiteSpace(found.PrimaryPreviewHex));
+            Assert.False(string.IsNullOrWhiteSpace(found.BgPreviewHex));
+            Assert.False(string.IsNullOrWhiteSpace(found.CardPreviewHex));
+            Assert.False(string.IsNullOrWhiteSpace(found.TextPreviewHex));
+        }
+    }
 }
 

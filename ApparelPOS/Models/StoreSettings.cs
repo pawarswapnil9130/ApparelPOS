@@ -23,4 +23,7 @@ public class StoreSettings
     public string? LabelPrinterName { get; set; }
     public bool AutoCutReceipt { get; set; } = true;
     public bool OpenCashDrawer { get; set; } = true;
+
+    // Appearance Theme
+    public string SelectedTheme { get; set; } = "ModernDark";
 }

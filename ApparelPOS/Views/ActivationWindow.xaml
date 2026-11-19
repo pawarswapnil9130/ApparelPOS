@@ -8,8 +8,8 @@
         Title="ApparelPOS - 1-Year Commercial License Activation"
         Height="680" Width="960"
         WindowStartupLocation="CenterScreen"
-        Background="{StaticResource BgDarkBrush}"
-        Foreground="{StaticResource TextPrimaryBrush}"
+        Background="{DynamicResource BgDarkBrush}"
+        Foreground="{DynamicResource TextPrimaryBrush}"
         Icon="/Assets/app_icon.ico">
 
     <Window.Resources>
@@ -33,17 +33,17 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Border Background="#312E81" Width="50" Height="50" CornerRadius="12" Margin="0,0,16,0">
+                    <Border Background="{DynamicResource AccentBadgeBgBrush}" Width="50" Height="50" CornerRadius="12" Margin="0,0,16,0">
                         <TextBlock Text="🛡️" FontSize="26" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
 
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="ApparelPOS License Activation" FontSize="20" FontWeight="Bold" Foreground="#FFFFFF"/>
-                        <TextBlock Text="{Binding HeaderSubtitle}" FontSize="13" Foreground="{StaticResource PrimaryLightBrush}" Margin="0,4,0,0"/>
+                        <TextBlock Text="ApparelPOS License Activation" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBlock Text="{Binding HeaderSubtitle}" FontSize="13" Foreground="{DynamicResource PrimaryLightBrush}" Margin="0,4,0,0"/>
                     </StackPanel>
                 </Grid>
 
-                <Separator Grid.Row="1" Background="{StaticResource BorderBrush}" Margin="0,0,0,18"/>
+                <Separator Grid.Row="1" Background="{DynamicResource BorderBrush}" Margin="0,0,0,18"/>
 
                 <!-- Row 2: Two Column Body -->
                 <Grid Grid.Row="2" Margin="0,0,0,18">
@@ -54,7 +54,7 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Left: Automated Payment via QR Code -->
-                    <Border Grid.Column="0" Background="#1E293B" BorderBrush="{StaticResource PrimaryBrush}" BorderThickness="1.5" CornerRadius="12" Padding="18">
+                    <Border Grid.Column="0" Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="1.5" CornerRadius="12" Padding="18">
                         <StackPanel HorizontalAlignment="Center">
                             <Border Background="#10B981" CornerRadius="12" Padding="12,4" HorizontalAlignment="Center" Margin="0,0,0,12">
                                 <TextBlock Text="₹249 / 1 YEAR (AUTO-KEY)" FontWeight="Bold" FontSize="12" Foreground="#042F2E"/>
@@ -65,30 +65,30 @@
                                 <Image Source="{Binding QrCodeImageSource}" Width="160" Height="160"/>
                             </Border>
 
-                            <TextBlock Text="📱 HOW TO GET YOUR KEY:" FontWeight="Bold" FontSize="11.5" Foreground="#FFFFFF" Margin="0,0,0,8"/>
-                            <TextBlock Text="1. Scan QR with Phone Camera, Google Lens, or Paytm" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,0,0,4"/>
-                            <TextBlock Text="2. Pay ₹249 with GPay, PhonePe, or UPI" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,0,0,4"/>
-                            <TextBlock Text="3. Your 1-Year Key appears instantly on phone screen!" FontSize="11" Foreground="{StaticResource SuccessBrush}" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,0,0,6"/>
-                            <TextBlock Text="4. Paste key on the right to activate." FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+                            <TextBlock Text="📱 HOW TO GET YOUR KEY:" FontWeight="Bold" FontSize="11.5" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8"/>
+                            <TextBlock Text="1. Scan QR with Phone Camera, Google Lens, or Paytm" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,0,0,4"/>
+                            <TextBlock Text="2. Pay ₹249 with GPay, PhonePe, or UPI" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,0,0,4"/>
+                            <TextBlock Text="3. Your 1-Year Key appears instantly on phone screen!" FontSize="11" Foreground="{DynamicResource SuccessBrush}" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,0,0,6"/>
+                            <TextBlock Text="4. Paste key on the right to activate." FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"/>
                         </StackPanel>
                     </Border>
 
                     <!-- Right: Machine Code & License Key Input -->
                     <StackPanel Grid.Column="2" VerticalAlignment="Center">
                         <!-- Machine Code Section -->
-                        <TextBlock Text="YOUR PC MACHINE CODE:" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource PrimaryLightBrush}" Margin="0,0,0,6"/>
-                        <Border Background="{StaticResource BgInputBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="12,8" Margin="0,0,0,8">
+                        <TextBlock Text="YOUR PC MACHINE CODE:" FontSize="11.5" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryLightBrush}" Margin="0,0,0,6"/>
+                        <Border Background="{DynamicResource BgInputBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="12,8" Margin="0,0,0,8">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="{Binding MachineCode}" FontFamily="Consolas" FontSize="20" FontWeight="Bold" Foreground="#FFFFFF" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding MachineCode}" FontFamily="Consolas" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
                                 <Button Grid.Column="1" Command="{Binding CopyMachineCodeCommand}" Content="📋 Copy Code" Padding="12,6" Style="{StaticResource PrimaryButton}"/>
                             </Grid>
                         </Border>
                         <TextBlock Text="🔒 Hardware-locked to this device's Motherboard UUID, CPU, and Disk serial."
-                                   FontSize="11" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,16"/>
+                                   FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,16"/>
 
                         <!-- License Input Section -->
                         <Grid Margin="0,0,0,6">
@@ -96,7 +96,7 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="PASTE 1-YEAR LICENSE KEY STRING OR BROWSE FILE:" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                            <TextBlock Text="PASTE 1-YEAR LICENSE KEY STRING OR BROWSE FILE:" FontSize="11.5" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
                             <Button Grid.Column="1" Command="{Binding BrowseLicenseFileCommand}" Content="📁 Browse .lic File" Padding="10,5"/>
                         </Grid>
 
@@ -106,15 +106,15 @@
                                  Margin="0,0,0,12"/>
 
                         <!-- Status Banner -->
-                        <Border Background="#0F172A" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,8" Margin="0,0,0,14"
+                        <Border Background="{DynamicResource BgInputBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,8" Margin="0,0,0,14"
                                 Visibility="{Binding ValidationMessage, Converter={StaticResource BoolToVis}}">
                             <TextBlock Text="{Binding ValidationMessage}" FontWeight="SemiBold" FontSize="11.5" TextWrapping="Wrap">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
-                                        <Setter Property="Foreground" Value="{StaticResource SuccessBrush}"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding HasError}" Value="True">
-                                                <Setter Property="Foreground" Value="{StaticResource DangerBrush}"/>
+                                                <Setter Property="Foreground" Value="{DynamicResource DangerBrush}"/>
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
@@ -129,7 +129,7 @@
 
                 <!-- Row 3: Footer -->
                 <Grid Grid.Row="3" Margin="0,8,0,0">
-                    <TextBlock Text="100% Offline Cryptographic System • Zero Internet Connection Required on this PC" VerticalAlignment="Center" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
+                    <TextBlock Text="100% Offline Cryptographic System • Zero Internet Connection Required on this PC" VerticalAlignment="Center" FontSize="11" Foreground="{DynamicResource TextMutedBrush}"/>
                 </Grid>
             </Grid>
         </Border>

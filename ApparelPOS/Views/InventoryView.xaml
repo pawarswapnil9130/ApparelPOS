@@ -37,7 +37,7 @@
                             <TextBox.Resources>
                                 <VisualBrush x:Key="HintBrush" TileMode="None" Stretch="None" AlignmentX="Left">
                                     <VisualBrush.Visual>
-                                        <TextBlock Text="🔍 Search Product, SKU, Barcode, Size..." Foreground="{StaticResource TextMutedBrush}"/>
+                                        <TextBlock Text="🔍 Search Product, SKU, Barcode, Size..." Foreground="{DynamicResource TextMutedBrush}"/>
                                     </VisualBrush.Visual>
                                 </VisualBrush>
                             </TextBox.Resources>
@@ -49,7 +49,7 @@
 
                         <!-- Low Stock Toggle -->
                         <CheckBox Grid.Column="2" Content="⚠️ Low Stock Only" IsChecked="{Binding LowStockOnly}"
-                                  VerticalAlignment="Center" Foreground="{StaticResource WarningBrush}" FontWeight="SemiBold" Margin="0,0,14,0"/>
+                                  VerticalAlignment="Center" Foreground="{DynamicResource WarningBrush}" FontWeight="SemiBold" Margin="0,0,14,0"/>
 
                         <!-- Action Buttons -->
                         <StackPanel Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right">
@@ -104,8 +104,8 @@
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis"/>
-                                            <TextBlock Text="{Binding Category}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{Binding Category}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
@@ -116,23 +116,23 @@
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding Sku}" FontWeight="SemiBold" FontSize="11.5" Foreground="#C7D2FE"/>
-                                            <TextBlock Text="{Binding Barcode}" FontFamily="Consolas" FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
+                                            <TextBlock Text="{Binding Sku}" FontWeight="SemiBold" FontSize="11.5" Foreground="{DynamicResource PrimaryLightBrush}"/>
+                                            <TextBlock Text="{Binding Barcode}" FontFamily="Consolas" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
                             <!-- MRP -->
-                            <DataGridTextColumn Header="MRP" Binding="{Binding SellingPrice, StringFormat='₹{0:N2}'}" Width="85" FontWeight="Bold" Foreground="{StaticResource SuccessBrush}"/>
+                            <DataGridTextColumn Header="MRP" Binding="{Binding SellingPrice, StringFormat='₹{0:N2}'}" Width="85" FontWeight="Bold" Foreground="{DynamicResource SuccessBrush}"/>
 
                             <!-- Cost & Tax -->
                             <DataGridTemplateColumn Header="COST / TAX" Width="100">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding CostPrice, StringFormat='₹{0:N2}'}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
-                                            <TextBlock Text="{Binding TaxRate, StringFormat='GST {0:0.#}%'}" FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
+                                            <TextBlock Text="{Binding CostPrice, StringFormat='₹{0:N2}'}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                            <TextBlock Text="{Binding TaxRate, StringFormat='GST {0:0.#}%'}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
@@ -142,7 +142,7 @@
                             <DataGridTemplateColumn Header="TOTAL STOCK" Width="120">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Border Background="#1E293B" CornerRadius="4" Padding="6,3" HorizontalAlignment="Left">
+                                        <Border Background="{DynamicResource BgInputBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="4" Padding="6,3" HorizontalAlignment="Left">
                                             <TextBlock Text="{Binding TotalStock, StringFormat='{}{0} Units'}" FontWeight="Bold" FontSize="11.5">
                                                 <TextBlock.Style>
                                                     <Style TargetType="TextBlock">
@@ -198,10 +198,10 @@
                             </Grid.ColumnDefinitions>
 
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <TextBlock Text="VARIANTS FOR: " FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource PrimaryLightBrush}"/>
-                                <TextBlock Text="{Binding SelectedProduct.Name}" FontSize="12" FontWeight="Bold" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis" MaxWidth="280"/>
-                                <Border Background="#312E81" CornerRadius="4" Padding="6,2" Margin="8,0,0,0">
-                                    <TextBlock Text="{Binding SelectedProduct.TotalStock, StringFormat='Stock: {0} pcs'}" FontWeight="Bold" FontSize="11" Foreground="#C7D2FE"/>
+                                <TextBlock Text="VARIANTS FOR: " FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryLightBrush}"/>
+                                <TextBlock Text="{Binding SelectedProduct.Name}" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" MaxWidth="280"/>
+                                <Border Background="{DynamicResource AccentBadgeBgBrush}" CornerRadius="4" Padding="6,2" Margin="8,0,0,0">
+                                    <TextBlock Text="{Binding SelectedProduct.TotalStock, StringFormat='Stock: {0} pcs'}" FontWeight="Bold" FontSize="11" Foreground="{DynamicResource AccentBadgeTextBrush}"/>
                                 </Border>
                             </StackPanel>
 
@@ -219,10 +219,10 @@
 
                         <!-- Empty State when product has 0 variants / 0 stock -->
                         <Border Grid.Row="1" Visibility="{Binding HasNoVariants, Converter={StaticResource BoolToVis}}"
-                                Background="#0F172A" BorderBrush="#3B82F6" BorderThickness="1.5" CornerRadius="8" Padding="16,12" Margin="0,2,0,2">
+                                Background="{DynamicResource BgInputBrush}" BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="1.5" CornerRadius="8" Padding="16,12" Margin="0,2,0,2">
                             <StackPanel HorizontalAlignment="Center">
-                                <TextBlock Text="📦 No size variants or stock added yet for this product!" FontSize="13" FontWeight="Bold" Foreground="#FFFFFF" HorizontalAlignment="Center" Margin="0,0,0,4"/>
-                                <TextBlock Text="In retail apparel, stock is tracked per size (S, M, L, XL). Choose an option below to add stock:" FontSize="11.5" Foreground="{StaticResource TextSecondaryBrush}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                                <TextBlock Text="📦 No size variants or stock added yet for this product!" FontSize="13" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center" Margin="0,0,0,4"/>
+                                <TextBlock Text="In retail apparel, stock is tracked per size (S, M, L, XL). Choose an option below to add stock:" FontSize="11.5" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                     <Button Command="{Binding QuickGenerateStandardSizesCommand}" Content="⚡ Quick-Add Standard Sizes (S, M, L, XL - 50 Units Total)"
                                             Style="{StaticResource SuccessButton}" Padding="14,6" Margin="0,0,10,0" FontSize="12" FontWeight="Bold"/>
@@ -242,8 +242,8 @@
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel VerticalAlignment="Center">
-                                                <TextBlock Text="{Binding Fabric}" FontSize="11" Foreground="#FFFFFF"/>
-                                                <TextBlock Text="{Binding FitType}" FontSize="10" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                                <TextBlock Text="{Binding Fabric}" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                                <TextBlock Text="{Binding FitType}" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}"/>
                                             </StackPanel>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
@@ -253,8 +253,8 @@
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel VerticalAlignment="Center">
-                                                <TextBlock Text="{Binding SkuVariant}" FontSize="11" FontWeight="SemiBold" Foreground="#C7D2FE"/>
-                                                <TextBlock Text="{Binding BarcodeVariant}" FontFamily="Consolas" FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
+                                                <TextBlock Text="{Binding SkuVariant}" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryLightBrush}"/>
+                                                <TextBlock Text="{Binding BarcodeVariant}" FontFamily="Consolas" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"/>
                                             </StackPanel>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
@@ -297,8 +297,8 @@
                 </Border>
 
                 <!-- Status message -->
-                <Border Grid.Row="3" Background="{StaticResource BgCardBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,5">
-                    <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource PrimaryLightBrush}" FontWeight="SemiBold" FontSize="12"/>
+                <Border Grid.Row="3" Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,5">
+                    <TextBlock Text="{Binding StatusMessage}" Foreground="{DynamicResource PrimaryLightBrush}" FontWeight="SemiBold" FontSize="12"/>
                 </Border>
             </Grid>
         </ScrollViewer>
@@ -307,34 +307,34 @@
         <Border Background="#CC000000" Visibility="{Binding IsEditProductModalOpen, Converter={StaticResource BoolToVis}}">
             <Border Style="{StaticResource CardPanel}" Width="580" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="24">
                 <StackPanel>
-                    <TextBlock Text="Product Master Details" FontWeight="Bold" FontSize="16" Foreground="#FFFFFF" Margin="0,0,0,16"/>
+                    <TextBlock Text="Product Master Details" FontWeight="Bold" FontSize="16" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,16"/>
 
                     <Grid Margin="0,0,0,10">
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Margin="0,0,8,0">
-                            <TextBlock Text="Product SKU *" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBlock Text="Product SKU *" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                             <TextBox Text="{Binding EditingProduct.Sku, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="8,0,0,0">
-                            <TextBlock Text="Master Barcode *" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBlock Text="Master Barcode *" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                             <TextBox Text="{Binding EditingProduct.Barcode, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                     </Grid>
 
-                    <TextBlock Text="Product Name *" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                    <TextBlock Text="Product Name *" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                     <TextBox Text="{Binding EditingProduct.Name, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10"/>
 
                     <Grid Margin="0,0,0,10">
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Margin="0,0,8,0">
                             <Grid Margin="0,0,0,4">
-                                <TextBlock Text="Category (Select or Type New)" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                                <TextBlock Text="Category (Select or Type New)" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
                                 <Button Command="{Binding OpenAddCategoryModalCommand}" Content="+ Add Category" HorizontalAlignment="Right" Padding="8,2" FontSize="11" Style="{StaticResource PrimaryButton}"/>
                             </Grid>
                             <ComboBox IsEditable="True" ItemsSource="{Binding CategorySuggestions}" Text="{Binding EditingProduct.Category, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="8,0,0,0">
-                            <TextBlock Text="Tax / GST %" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBlock Text="Tax / GST %" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                             <TextBox Text="{Binding EditingProduct.TaxRate, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                     </Grid>
@@ -342,15 +342,15 @@
                     <Grid Margin="0,0,0,10">
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Margin="0,0,6,0">
-                            <TextBlock Text="Selling Price (MRP)" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBlock Text="Selling Price (MRP)" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                             <TextBox Text="{Binding EditingProduct.SellingPrice, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="6,0,6,0">
-                            <TextBlock Text="Cost Price" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBlock Text="Cost Price" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                             <TextBox Text="{Binding EditingProduct.CostPrice, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                         <StackPanel Grid.Column="2" Margin="6,0,6,0">
-                            <TextBlock Text="Low Stock Limit" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBlock Text="Low Stock Limit" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                             <TextBox Text="{Binding EditingProduct.LowStockThreshold, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                         <StackPanel Grid.Column="3" Margin="6,0,0,0" Visibility="{Binding IsNewProduct, Converter={StaticResource BoolToVis}}">
@@ -359,7 +359,7 @@
                         </StackPanel>
                     </Grid>
 
-                    <TextBlock Text="Description" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                    <TextBlock Text="Description" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                     <TextBox Text="{Binding EditingProduct.Description, UpdateSourceTrigger=PropertyChanged}" Height="60" TextWrapping="Wrap" Margin="0,0,0,20"/>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -374,16 +374,16 @@
         <Border Background="#CC000000" Visibility="{Binding IsAddVariantModalOpen, Converter={StaticResource BoolToVis}}">
             <Border Style="{StaticResource CardPanel}" Width="520" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="24">
                 <StackPanel>
-                    <TextBlock Text="Add Apparel Variant (Size &amp; Color)" FontWeight="Bold" FontSize="16" Foreground="#FFFFFF" Margin="0,0,0,16"/>
+                    <TextBlock Text="Add Apparel Variant (Size &amp; Color)" FontWeight="Bold" FontSize="16" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,16"/>
 
                     <Grid Margin="0,0,0,10">
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Margin="0,0,8,0">
-                            <TextBlock Text="Size (e.g. S, M, L, XL, 38, 40) *" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBlock Text="Size (e.g. S, M, L, XL, 38, 40) *" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                             <TextBox Text="{Binding NewVariant.Size, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="8,0,0,0">
-                            <TextBlock Text="Color (e.g. Navy, Olive, White) *" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBlock Text="Color (e.g. Navy, Olive, White) *" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                             <TextBox Text="{Binding NewVariant.Color, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                     </Grid>
@@ -391,11 +391,11 @@
                     <Grid Margin="0,0,0,10">
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Margin="0,0,8,0">
-                            <TextBlock Text="Fabric / Material" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBlock Text="Fabric / Material" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                             <TextBox Text="{Binding NewVariant.Fabric, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="8,0,0,0">
-                            <TextBlock Text="Fit Type (Slim, Regular, Relaxed)" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBlock Text="Fit Type (Slim, Regular, Relaxed)" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                             <TextBox Text="{Binding NewVariant.FitType, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                     </Grid>
@@ -403,11 +403,11 @@
                     <Grid Margin="0,0,0,10">
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Margin="0,0,8,0">
-                            <TextBlock Text="Scannable Barcode *" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBlock Text="Scannable Barcode *" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                             <TextBox Text="{Binding NewVariant.BarcodeVariant, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="8,0,0,0">
-                            <TextBlock Text="Variant SKU" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBlock Text="Variant SKU" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                             <TextBox Text="{Binding NewVariant.SkuVariant, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                     </Grid>
@@ -415,11 +415,11 @@
                     <Grid Margin="0,0,0,20">
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Margin="0,0,8,0">
-                            <TextBlock Text="Initial Stock Quantity" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBlock Text="Initial Stock Quantity" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                             <TextBox Text="{Binding NewVariant.StockQuantity, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="8,0,0,0">
-                            <TextBlock Text="Price Delta (Optional)" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBlock Text="Price Delta (Optional)" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                             <TextBox Text="{Binding NewVariant.AdditionalPrice, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                     </Grid>
@@ -436,7 +436,7 @@
         <Border Background="#CC000000" Visibility="{Binding IsAddStockModalOpen, Converter={StaticResource BoolToVis}}">
             <Border Style="{StaticResource CardPanel}" Width="520" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="24">
                 <StackPanel>
-                    <TextBlock Text="{Binding ModalTitle}" FontWeight="Bold" FontSize="16" Foreground="#FFFFFF" Margin="0,0,0,14"/>
+                    <TextBlock Text="{Binding ModalTitle}" FontWeight="Bold" FontSize="16" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,14"/>
 
                     <!-- Mode Selector Buttons (Add, Deduct, Set) -->
                     <Grid Margin="0,0,0,16">
@@ -457,8 +457,8 @@
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding IsAddMode}" Value="False">
                                             <Setter Property="Background" Value="#1E293B"/>
-                                            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
-                                            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -476,8 +476,8 @@
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding IsDeductMode}" Value="False">
                                             <Setter Property="Background" Value="#1E293B"/>
-                                            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
-                                            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -495,8 +495,8 @@
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding IsSetMode}" Value="False">
                                             <Setter Property="Background" Value="#1E293B"/>
-                                            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
-                                            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -505,11 +505,11 @@
                     </Grid>
 
                     <!-- Item Summary Card -->
-                    <Border Background="{StaticResource BgInputBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,16">
+                    <Border Background="{DynamicResource BgInputBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,16">
                         <StackPanel>
-                            <TextBlock Text="{Binding SelectedProduct.Name}" FontWeight="Bold" FontSize="14" Foreground="#FFFFFF"/>
-                            <TextBlock Text="{Binding StockTargetVariant.DisplayName}" FontSize="12" Foreground="{StaticResource PrimaryLightBrush}" Margin="0,2,0,4"/>
-                            <TextBlock Text="{Binding StockTargetVariant.BarcodeVariant, StringFormat='Barcode: {0}'}" FontFamily="Consolas" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                            <TextBlock Text="{Binding SelectedProduct.Name}" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="{Binding StockTargetVariant.DisplayName}" FontSize="12" Foreground="{DynamicResource PrimaryLightBrush}" Margin="0,2,0,4"/>
+                            <TextBlock Text="{Binding StockTargetVariant.BarcodeVariant, StringFormat='Barcode: {0}'}" FontFamily="Consolas" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
                     </Border>
 
@@ -520,10 +520,10 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Border Grid.Column="0" Background="#1E293B" CornerRadius="6" Padding="12,10" Margin="0,0,6,0">
+                        <Border Grid.Column="0" Background="{DynamicResource BgInputBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="12,10" Margin="0,0,6,0">
                             <StackPanel>
-                                <TextBlock Text="CURRENT STOCK" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
-                                <TextBlock Text="{Binding StockTargetVariant.StockQuantity, StringFormat='{}{0} Units'}" FontWeight="Bold" FontSize="18" Foreground="#FFFFFF" Margin="0,2,0,0"/>
+                                <TextBlock Text="CURRENT STOCK" FontSize="11" Foreground="{DynamicResource TextMutedBrush}"/>
+                                <TextBlock Text="{Binding StockTargetVariant.StockQuantity, StringFormat='{}{0} Units'}" FontWeight="Bold" FontSize="18" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,2,0,0"/>
                             </StackPanel>
                         </Border>
 
@@ -536,7 +536,7 @@
                     </Grid>
 
                     <!-- Quantity Input Field with Clear to 0 Button -->
-                    <TextBlock Text="{Binding InputQuantityLabel}" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,6"/>
+                    <TextBlock Text="{Binding InputQuantityLabel}" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6"/>
                     <Grid Margin="0,0,0,12">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -549,7 +549,7 @@
                     </Grid>
 
                     <!-- Quick Preset Chips -->
-                    <TextBlock Text="Quick Preset Numbers:" FontSize="11" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,6"/>
+                    <TextBlock Text="Quick Preset Numbers:" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,6"/>
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,22">
                         <Button Content="0 (Clear)" Command="{Binding SetStockToZeroCommand}" Margin="0,0,6,0" Padding="12,5" FontSize="12" Style="{StaticResource DangerButton}"/>
                         <Button Content="5" Command="{Binding SetStockToAddPresetCommand}" CommandParameter="5" Margin="0,0,6,0" Padding="12,5" FontSize="12"/>
@@ -573,12 +573,12 @@
             <Border Style="{StaticResource CardPanel}" Width="460" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="24">
                 <StackPanel>
                     <Grid Margin="0,0,0,16">
-                        <TextBlock Text="🏷️ Add New Apparel Category" FontWeight="Bold" FontSize="16" Foreground="#FFFFFF"/>
+                        <TextBlock Text="🏷️ Add New Apparel Category" FontWeight="Bold" FontSize="16" Foreground="{DynamicResource TextPrimaryBrush}"/>
                         <Button Content="✕" Command="{Binding CloseAddCategoryModalCommand}" HorizontalAlignment="Right"
-                                Background="Transparent" Foreground="{StaticResource TextSecondaryBrush}" BorderThickness="0" FontSize="14" Padding="6,2"/>
+                                Background="Transparent" Foreground="{DynamicResource TextSecondaryBrush}" BorderThickness="0" FontSize="14" Padding="6,2"/>
                     </Grid>
 
-                    <TextBlock Text="Category Name *" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                    <TextBlock Text="Category Name *" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                     <TextBox Text="{Binding NewCategoryName, UpdateSourceTrigger=PropertyChanged}" Padding="10,6" Margin="0,0,0,14" FontSize="14"/>
 
                     <Grid Margin="0,0,0,14">
@@ -587,16 +587,16 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Margin="0,0,6,0">
-                            <TextBlock Text="HSN Code" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBlock Text="HSN Code" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                             <TextBox Text="{Binding NewCategoryHsn, UpdateSourceTrigger=PropertyChanged}" Padding="10,6"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="6,0,0,0">
-                            <TextBlock Text="Default GST %" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBlock Text="Default GST %" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                             <TextBox Text="{Binding NewCategoryTaxRate, UpdateSourceTrigger=PropertyChanged}" Padding="10,6"/>
                         </StackPanel>
                     </Grid>
 
-                    <TextBlock Text="Common Category Suggestions (Click to fill):" FontSize="11" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,6"/>
+                    <TextBlock Text="Common Category Suggestions (Click to fill):" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,6"/>
                     <WrapPanel Margin="0,0,0,18">
                         <Button Content="T-Shirts" Command="{Binding QuickSelectSuggestionCommand}" CommandParameter="T-Shirts" Margin="0,0,6,6" Padding="8,4" FontSize="11"/>
                         <Button Content="Shirts" Command="{Binding QuickSelectSuggestionCommand}" CommandParameter="Shirts" Margin="0,0,6,6" Padding="8,4" FontSize="11"/>

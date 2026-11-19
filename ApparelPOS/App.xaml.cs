@@ -25,6 +25,7 @@ public partial class App : Application
         services.AddDbContext<AppDbContext>();
 
         // 2. Core Business Services
+        services.AddSingleton<IThemeService, ThemeService>();
         services.AddSingleton<IHardwareInfoService, HardwareInfoService>();
         services.AddSingleton<ILicenseService, LicenseService>();
         services.AddSingleton<IBarcodeService, BarcodeService>();
@@ -58,6 +59,10 @@ public partial class App : Application
             MessageBox.Show($"An unexpected error occurred: {args.Exception.Message}", "System Error", MessageBoxButton.OK, MessageBoxImage.Error);
             args.Handled = true;
         };
+
+        // 0. Initialize User Theme Preference
+        var themeService = _serviceProvider.GetRequiredService<IThemeService>();
+        themeService.InitializeTheme();
 
         // 1. Initialize SQLite Database & Seed Data
         using (var scope = _serviceProvider.CreateScope())

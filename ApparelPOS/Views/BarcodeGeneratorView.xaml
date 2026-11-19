@@ -18,9 +18,9 @@
             <!-- Header -->
             <Border Grid.Row="0" Style="{StaticResource CardPanel}" Padding="14,10" Margin="0,0,0,12">
                 <StackPanel>
-                    <TextBlock Text="🏷️ APPAREL THERMAL BARCODE &amp; PRICE TAG GENERATOR" FontWeight="Bold" FontSize="15" Foreground="#FFFFFF"/>
+                    <TextBlock Text="🏷️ APPAREL THERMAL BARCODE &amp; PRICE TAG GENERATOR" FontWeight="Bold" FontSize="15" Foreground="{DynamicResource TextPrimaryBrush}"/>
                     <TextBlock Text="Render Code 128 barcodes, preview 50mm x 25mm tags, and dispatch direct to USB thermal label printers"
-                               FontSize="11.5" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,3,0,0"/>
+                               FontSize="11.5" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,3,0,0"/>
                 </StackPanel>
             </Border>
 
@@ -35,18 +35,18 @@
                 <Border Grid.Column="0" Style="{StaticResource CardPanel}" Margin="0,0,14,0" Padding="16">
                     <StackPanel>
                         <Grid Margin="0,0,0,8">
-                            <TextBlock Text="1. SELECT APPAREL MASTER PRODUCT" FontWeight="Bold" FontSize="11.5" Foreground="{StaticResource PrimaryLightBrush}" VerticalAlignment="Center"/>
+                            <TextBlock Text="1. SELECT APPAREL MASTER PRODUCT" FontWeight="Bold" FontSize="11.5" Foreground="{DynamicResource PrimaryLightBrush}" VerticalAlignment="Center"/>
                             <Button HorizontalAlignment="Right" Command="{Binding RefreshProductsCommand}" Content="🔄 Refresh List" Padding="8,3" FontSize="11"/>
                         </Grid>
                         <ComboBox ItemsSource="{Binding Products}" SelectedItem="{Binding SelectedProduct}" DisplayMemberPath="Name" Margin="0,0,0,14"/>
 
-                        <TextBlock Text="2. SELECT VARIANT (SIZE / COLOR)" FontWeight="Bold" FontSize="11.5" Foreground="{StaticResource PrimaryLightBrush}" Margin="0,0,0,8"/>
+                        <TextBlock Text="2. SELECT VARIANT (SIZE / COLOR)" FontWeight="Bold" FontSize="11.5" Foreground="{DynamicResource PrimaryLightBrush}" Margin="0,0,0,8"/>
                         <ComboBox ItemsSource="{Binding Variants}" SelectedItem="{Binding SelectedVariant}" DisplayMemberPath="DisplayName" Margin="0,0,0,14"/>
 
-                        <TextBlock Text="3. NUMBER OF LABEL COPIES TO PRINT" FontWeight="Bold" FontSize="11.5" Foreground="{StaticResource PrimaryLightBrush}" Margin="0,0,0,8"/>
+                        <TextBlock Text="3. NUMBER OF LABEL COPIES TO PRINT" FontWeight="Bold" FontSize="11.5" Foreground="{DynamicResource PrimaryLightBrush}" Margin="0,0,0,8"/>
                         <TextBox Text="{Binding PrintCopies, UpdateSourceTrigger=PropertyChanged}" FontSize="14" FontWeight="Bold" Margin="0,0,0,18"/>
 
-                        <Separator Background="{StaticResource BorderBrush}" Margin="0,0,0,14"/>
+                        <Separator Background="{DynamicResource BorderBrush}" Margin="0,0,0,14"/>
 
                         <Button Command="{Binding PrintLabelCommand}" Style="{StaticResource SuccessButton}" Height="42" FontSize="12.5" Margin="0,0,0,8">
                             <StackPanel Orientation="Horizontal">
@@ -60,7 +60,7 @@
                             </StackPanel>
                         </Button>
 
-                        <TextBlock Text="Opens the Windows Print dialog or Edge print preview so you can choose your HP Neverstop Laser printer or PDF and print." FontSize="11" Foreground="{StaticResource TextMutedBrush}" TextWrapping="Wrap"/>
+                        <TextBlock Text="Opens the Windows Print dialog or Edge print preview so you can choose your HP Neverstop Laser printer or PDF and print." FontSize="11" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>
 
@@ -74,7 +74,7 @@
                     <!-- Visual Label Preview Card (Garment Tag Simulation) -->
                     <Border Grid.Row="0" Style="{StaticResource CardPanel}" Padding="16" Margin="0,0,0,12">
                         <StackPanel>
-                            <TextBlock Text="LIVE THERMAL LABEL PREVIEW (50mm x 25mm)" FontWeight="Bold" FontSize="11.5" Foreground="{StaticResource PrimaryLightBrush}" Margin="0,0,0,10"/>
+                            <TextBlock Text="LIVE THERMAL LABEL PREVIEW (50mm x 25mm)" FontWeight="Bold" FontSize="11.5" Foreground="{DynamicResource PrimaryLightBrush}" Margin="0,0,0,10"/>
 
                             <!-- Simulated White Thermal Label Canvas -->
                             <Border Background="#FFFFFF" BorderBrush="#CBD5E1" BorderThickness="2" CornerRadius="6"
@@ -117,11 +117,11 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="RAW TSPL / ESC-POS COMMAND SCRIPT" FontWeight="Bold" FontSize="11.5" Foreground="{StaticResource PrimaryLightBrush}" VerticalAlignment="Center"/>
+                                <TextBlock Text="RAW TSPL / ESC-POS COMMAND SCRIPT" FontWeight="Bold" FontSize="11.5" Foreground="{DynamicResource PrimaryLightBrush}" VerticalAlignment="Center"/>
                                 <Button Grid.Column="1" Command="{Binding CopyTsplCommand}" Content="📋 Copy Script" Padding="8,3" FontSize="11"/>
                             </Grid>
 
-                            <Border Grid.Row="1" Background="{StaticResource BgInputBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="8" MinHeight="100">
+                            <Border Grid.Row="1" Background="{DynamicResource BgInputBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="8" MinHeight="100">
                                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                                     <TextBlock Text="{Binding TsplScript}" FontFamily="Consolas" FontSize="11" Foreground="#A5B4FC"/>
                                 </ScrollViewer>
@@ -132,8 +132,8 @@
             </Grid>
 
             <!-- Status Bar -->
-            <Border Grid.Row="2" Background="{StaticResource BgCardBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,5" Margin="0,10,0,0">
-                <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource PrimaryLightBrush}" FontWeight="SemiBold" FontSize="12"/>
+            <Border Grid.Row="2" Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,5" Margin="0,10,0,0">
+                <TextBlock Text="{Binding StatusMessage}" Foreground="{DynamicResource PrimaryLightBrush}" FontWeight="SemiBold" FontSize="12"/>
             </Border>
         </Grid>
     </ScrollViewer>

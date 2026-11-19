@@ -13,6 +13,7 @@ public class SettingsViewModel : ViewModelBase
     private readonly IBarcodeService _barcodeService;
     private readonly ILicenseService _licenseService;
     private readonly IHardwareInfoService _hardwareInfoService;
+    private readonly IThemeService _themeService;
 
     private StoreSettings _settings = new();
     public StoreSettings Settings
@@ -26,23 +27,43 @@ public class SettingsViewModel : ViewModelBase
     public string MachineCode { get; }
     public LicenseInfo LicenseInfo { get; }
 
+    public IReadOnlyList<ThemeOption> ThemeOptions => _themeService.AvailableThemes;
+
+    public ThemeOption? SelectedThemeOption
+    {
+        get => _themeService.CurrentThemeOption;
+        set
+        {
+            if (value != null && value.Id != _themeService.CurrentTheme)
+            {
+                _themeService.ApplyTheme(value.Id);
+                OnPropertyChanged(nameof(SelectedThemeOption));
+                OnPropertyChanged(nameof(ThemeOptions));
+                StatusMessage = $"Active theme switched to '{value.Name}'.";
+            }
+        }
+    }
+
     public IAsyncRelayCommand SaveSettingsCommand { get; }
     public IRelayCommand TestThermalPrintCommand { get; }
     public IAsyncRelayCommand RefreshPrintersCommand { get; }
     public IAsyncRelayCommand RestoreSampleCatalogCommand { get; }
+    public IRelayCommand<ThemeOption> SelectThemeCommand { get; }
 
     public SettingsViewModel(
         IBillingService billingService,
         IPrinterService printerService,
         IBarcodeService barcodeService,
         ILicenseService licenseService,
-        IHardwareInfoService hardwareInfoService)
+        IHardwareInfoService hardwareInfoService,
+        IThemeService themeService)
     {
         _billingService = billingService;
         _printerService = printerService;
         _barcodeService = barcodeService;
         _licenseService = licenseService;
         _hardwareInfoService = hardwareInfoService;
+        _themeService = themeService;
 
         MachineCode = _hardwareInfoService.GetMachineCode();
         LicenseInfo = _licenseService.GetCachedLicenseInfo();
@@ -51,6 +72,19 @@ public class SettingsViewModel : ViewModelBase
         TestThermalPrintCommand = new RelayCommand(TestThermalPrint);
         RefreshPrintersCommand = new AsyncRelayCommand(LoadPrintersAndSettingsAsync);
         RestoreSampleCatalogCommand = new AsyncRelayCommand(RestoreSampleCatalogAsync);
+        SelectThemeCommand = new RelayCommand<ThemeOption>(opt =>
+        {
+            if (opt != null)
+            {
+                SelectedThemeOption = opt;
+            }
+        });
+
+        _themeService.ThemeChanged += _ =>
+        {
+            OnPropertyChanged(nameof(SelectedThemeOption));
+            OnPropertyChanged(nameof(ThemeOptions));
+        };
 
         _ = LoadPrintersAndSettingsAsync();
     }

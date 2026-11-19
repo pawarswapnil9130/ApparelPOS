@@ -106,4 +106,12 @@ public partial class MainWindow : Window
             mainVm.BillingVm.CloseCameraScanner();
         }
     }
+
+    private void ThemeBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (CmbTheme != null)
+        {
+            CmbTheme.IsDropDownOpen = !CmbTheme.IsDropDownOpen;
+        }
+    }
 }
